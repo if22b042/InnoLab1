@@ -1,0 +1,56 @@
+/* Basic styles for container */
+.container {
+    max-width: 600px; /* Adjust the max-width as needed */
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  /* Margin for the top */
+  .mt-5 {
+    margin-top: 5rem;
+  }
+  
+  /* Styles for form elements */
+  .form-label {
+    font-weight: bold;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Styles for results section */
+  .results {
+    margin-top: 2rem;
+  }
+  
+  /* Adjustments for sliders */
+  .form-range {
+    width: 100%;
+  }
+  
+  /* Additional styling for JSON output */
+  p > small {
+    color: #777;
+  }
+  
