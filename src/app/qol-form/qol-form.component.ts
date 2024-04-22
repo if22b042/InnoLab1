@@ -101,7 +101,11 @@ export class QolFormComponent {
       next: (response) => {
         if (response.status === 'OK') {
           const coordinates = response.results[0].geometry.location;
-
+          
+          if(coordinates.lat==""){
+            console.error("Coordinates are not available for this adress");
+          }
+          console.log("lat: ");
           const policeStationsObservable = this.policeStationsService.readCsv('/assets/Police_Locations.csv').pipe(
             map(stations => stations.filter(station => 
               this.policeStationsService.calculateDistance(coordinates.lat, coordinates.lng, station.latitude, station.longitude) <= 1000
@@ -147,9 +151,11 @@ export class QolFormComponent {
 
               var incomePoints=0;
               incomePoints=incomeData?.totalIncome|| 0;
-              this.incomePoints=(45)*(1-(incomePoints-20800)/(17000))-10;
+
+              this.incomePoints=(45)*((incomePoints-20800)/(17000))-10;
 
               this.unemploymentPoints=(45)*(1-(unemploymentData-32)/(91))-10|| 0;
+              console.log("unemp. points: ", this.unemploymentPoints);
               
               if ( this.policeStationsCount==1){
                 this.policePoints=13;
@@ -174,7 +180,10 @@ export class QolFormComponent {
               else if ( this.schoolsCount==2){
                 this.schoolPoints=15;
               }
-              else if ( this.schoolsCount>2){
+              else if ( this.schoolsCount>5){
+                this.schoolPoints=25;
+              }
+              else if(this.schoolsCount>2){
                 this.schoolPoints=20;
               }
               else{
@@ -277,6 +286,7 @@ export class QolFormComponent {
       + this.policeModifier * this.policePoints
       + this.incomeModifier * this.incomePoints
       + this.hospitalModifier * this.hospitalPoints
+      + this.unemploymentModifier* this.unemploymentPoints
     )/this.allModifiers)*10)/10;
   }
 }

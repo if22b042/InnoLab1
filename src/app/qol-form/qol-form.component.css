@@ -1,6 +1,6 @@
-/* Basic styles for container */
+
 .container {
-    max-width: 600px; /* Adjust the max-width as needed */
+    max-width: 600px; 
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;

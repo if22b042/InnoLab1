@@ -34,7 +34,6 @@ export class UnemploymentService {
       return 0;
     }
 
-    // Parse data starting from the line after headers
     for (let i = headerIndex + 1; i < lines.length; i++) {
       const row = lines[i].split(';');
       if (row[districtCodeIndex] && row[districtCodeIndex].trim() === districtCode) {
