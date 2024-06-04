@@ -21,34 +21,9 @@
   </form>
 
   <div *ngIf="showResults" class="results mt-5">
-    <h2>Quality of Life:</h2> {{ qualityOfLife | json }}
-
+    <h2>Quality of Life:</h2> <h3>{{ qualityOfLife | json }}    </h3>
     <div *ngIf="showSliders">
-      <h4>Adjust Quality of Life Factors:</h4>
-      <div class="mb-3">
-        <label for="incomeSlider">Income Weight: {{ incomeModifier }}</label>
-        <input type="range" class="form-range" id="incomeSlider" [(ngModel)]="incomeModifier" min="0" max="2" step="0.1">
-      </div>
-      <div class="mb-3">
-        <label for="unemploymentSlider">Unemployment Weight: {{ unemploymentModifier }}</label>
-        <input type="range" class="form-range" id="unemploymentSlider" [(ngModel)]="unemploymentModifier" min="0" max="2" step="0.1">
-      </div>
-      <div class="mb-3">
-        <label for="policeSlider">Police Proximity Weight: {{ policeModifier }}</label>
-        <input type="range" class="form-range" id="policeSlider" [(ngModel)]="policeModifier" min="0" max="2" step="0.1">
-      </div>
-      <div class="mb-3">
-        <label for="schoolSlider">School Proximity Weight: {{ schoolModifier }}</label>
-        <input type="range" class="form-range" id="schoolSlider" [(ngModel)]="schoolModifier" min="0" max="2" step="0.1">
-      </div>
-      <div class="mb-3">
-        <label for="hospitalSlider">Hospital Proximity Weight: {{ hospitalModifier }}</label>
-        <input type="range" class="form-range" id="hospitalSlider" [(ngModel)]="hospitalModifier" min="0" max="2" step="0.1">
-      </div>
-      <div class="mb-3">
-        <label for="CenterSlider">Center Proximity Weight: {{ hospitalModifier }}</label>
-        <input type="range" class="form-range" id="CenterSlider" [(ngModel)]="distanceModifier" min="0" max="2" step="0.1">
-      </div>
+      
       <h4>Score Worth Table</h4>
       <table class="table">
         <thead>
@@ -89,11 +64,43 @@
   
     </div>
 
-    <p><strong>Income Data:</strong> {{ incomeData | json }} <small>  Measures average income in district in Euros,   Average: 25500</small></p>
-    <p><strong>Unemployment Data:</strong> {{ unemploymentData | json }} <small>  Measures Unempolyment Density inside of district,   Average: 80</small></p>
-    <p><strong>Police Stations Nearby:</strong> {{ policeStationsCount }} <small> Measures the amount of police stations within a 1000m radius</small></p>
-    <p><strong>Schools Nearby:</strong> {{ schoolsCount }}<small>   Measures the number of schools within a 500m radius</small></p>
-    <p><strong>Distance to City Center:</strong> {{ distanceToCenter }} meters <small>  Measures the amont of meters from and to the Stephansplatz</small></p>
-    <p><strong>Hospitals Nearby:</strong> {{ hospitalCount }}<small>  Measures the number of Hospitals within a 2000m radius</small></p>
+    <p><strong>Income Data:</strong> {{ incomeData | json }} <small>  Measures average income in district in Euros,  </small>Average: 25500</p>
+    <p><strong>Unemployment Data:</strong> {{ unemploymentData | json }} <small>  Measures Unempolyment Density inside of district,   </small> Average: 80</p>
+    <p><strong>Police Stations Nearby:</strong> {{ policeStationsCount }} <small> Measures the amount of police stations within a 1000m radius</small>   Average: 2.1</p>
+    <p><strong>Schools Nearby:</strong> {{ schoolsCount }}<small>   Measures the number of schools within a 500m radius</small>   Average: 3.77</p>
+    <p><strong>Distance to City Center:</strong> {{ distanceToCenter }} meters <small>  Measures the amont of meters from and to the Stephansplatz</small>   </p>
+    <p><strong>Hospitals Nearby:</strong> {{ hospitalCount }}<small>  Measures the number of Hospitals within a 2000m radius</small> Average: 2.29</p>
+    <p><strong>Green Spaces Nearby:</strong> {{ greenSpaceCount }}<small>  Measures the number of Green Spaces within a 2000m radius</small>  Average: 90</p>
+
+    <h4>Adjust Quality of Life Factors:</h4>
+      <div class="mb-3">
+        <label for="incomeSlider">Income Weight: {{ incomeModifier }}</label>
+        <input type="range" class="form-range" id="incomeSlider" [(ngModel)]="incomeModifier" min="0" max="2" step="0.1">
+      </div>
+      <div class="mb-3">
+        <label for="unemploymentSlider">Unemployment Weight: {{ unemploymentModifier }}</label>
+        <input type="range" class="form-range" id="unemploymentSlider" [(ngModel)]="unemploymentModifier" min="0" max="2" step="0.1">
+      </div>
+      <div class="mb-3">
+        <label for="policeSlider">Police Proximity Weight: {{ policeModifier }}</label>
+        <input type="range" class="form-range" id="policeSlider" [(ngModel)]="policeModifier" min="0" max="2" step="0.1">
+      </div>
+      <div class="mb-3">
+        <label for="schoolSlider">School Proximity Weight: {{ schoolModifier }}</label>
+        <input type="range" class="form-range" id="schoolSlider" [(ngModel)]="schoolModifier" min="0" max="2" step="0.1">
+      </div>
+      <div class="mb-3">
+        <label for="hospitalSlider">Hospital Proximity Weight: {{ hospitalModifier }}</label>
+        <input type="range" class="form-range" id="hospitalSlider" [(ngModel)]="hospitalModifier" min="0" max="2" step="0.1">
+      </div>
+      <div class="mb-3">
+        <label for="CenterSlider">Center Proximity Weight: {{ distanceModifier }}</label>
+        <input type="range" class="form-range" id="CenterSlider" [(ngModel)]="distanceModifier" min="0" max="2" step="0.1">
+      </div>
+      <div class="mb-3">
+        <label for="GreenSpaceSlider">Green Space Weight: {{ greenSpaceModifier }}</label>
+        <input type="range" class="form-range" id="GreenSpaceSlider" [(ngModel)]="greenSpaceModifier" min="0" max="2" step="0.1">
+      </div>
   </div>
+  
 </div>

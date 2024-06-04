@@ -5,11 +5,12 @@ import { PoliceStationsService } from '../police-stations/police-stations.servic
 import { CenterDistanceService } from '../Center-Distance/center-distance.service';
 import { SchoolsService } from '../School/schools.service';
 import { HomelessDataService } from '../Homeless/homeless-data.service';
-import { Observable, forkJoin } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { finalize, map, catchError } from 'rxjs/operators';
 import {HospitalService} from '../Hospital/hospital.service';
 
-//import { GreenSpaceService } from '../Green-Space/greenspace.service';
+import { TestingService } from '../Testing/testing.service';
+import { GreenSpaceService } from '../Green-Space/greenspace.service';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms'; 
 
@@ -35,11 +36,13 @@ export class QolFormComponent {
   distanceToCenter: number = 0;
   hospitalCount: number=0;
   parkCount: number=0;
+  greenSpaceCount: number=0;
 
   state:any;
 
 
   showSliders: boolean = false; 
+
 
   incomeModifier: number = 1;
   unemploymentModifier: number = 1;
@@ -48,6 +51,7 @@ export class QolFormComponent {
   hospitalModifier: number = 1;
   distanceModifier: number=1;
   parkModifier: number=1;
+  greenSpaceModifier: number=1;
 
   allModifiers:number=1;
 
@@ -58,6 +62,7 @@ export class QolFormComponent {
   hospitalPoints: number = 1;
   distancePoints: number=1;
   parkPoints: number=1;
+  greenSpacePoints: number= 1;
   constructor(
     private geocodeService: GeocodeService, 
     private csvReaderService: CsvReaderService,
@@ -67,7 +72,8 @@ export class QolFormComponent {
     private centerDistanceService: CenterDistanceService,
     private hospitalService: HospitalService,
     private unemploymentService: UnemploymentService,
-    //private greenSpaceService: GreenSpaceService
+    private greenSpaceService: GreenSpaceService,
+    private testingService: TestingService
   ) { } 
 
 
@@ -97,7 +103,15 @@ export class QolFormComponent {
    
     const homelessnessObservable= this.unemploymentService.getUnemploymentDensity(districtCode);
 
-    this.geocodeService.getCoordinates(this.qolData.address).subscribe({
+    
+
+    this.geocodeService.getCoordinates(this.qolData.address).pipe(
+      catchError((error) => {
+        alert('Geocoding failed. Please check your internet connection or the address entered.');
+        console.error('Geocoding error:', error);
+        return of(null);
+      })
+    ).subscribe({
       next: (response) => {
         if (response.status === 'OK') {
           const coordinates = response.results[0].geometry.location;
@@ -123,11 +137,11 @@ export class QolFormComponent {
             subscriber.next(distance);
             subscriber.complete();
           }); 
-/*
-          const parkObservable = this.greenSpaceService.readCsv("assets/GreenSpace.csv").pipe(
-            map(greenSpaces => this.greenSpaceService.countGreenSpacesInRange(coordinates.lat, coordinates.lng, greenSpaces))
+          const greenspacesObservable = this.greenSpaceService.readCsv('/assets/GreenSpace.csv').pipe(
+            map(greenspaces => this.greenSpaceService.findNearbyGreenSpaces(greenspaces, coordinates.lat, coordinates.lng))
           );
-          */
+        
+
 
               
 
@@ -139,57 +153,24 @@ export class QolFormComponent {
             schoolsObservable,
             distanceToCenterObservable,
             hospitalsObservable,
+            greenspacesObservable
           ]).subscribe({
-            next: ([incomeData, unemploymentData, policeData, schoolsData, centerDistance, hospitalData]) => {
+            next: ([incomeData, unemploymentData, policeData, schoolsData, centerDistance, hospitalData, greenSpaceData]) => {
               this.incomeData = incomeData?.totalIncome; 
               this.unemploymentData = unemploymentData; 
               this.policeStationsCount = policeData.length;
               this.schoolsCount = schoolsData.length;
               this.distanceToCenter = Math.round(centerDistance); 
               this.hospitalCount = hospitalData.length;
+              this.greenSpaceCount= greenSpaceData.length;
       
-
-              var incomePoints=0;
-              incomePoints=incomeData?.totalIncome|| 0;
-
-              this.incomePoints=(45)*((incomePoints-20800)/(17000))-10;
-
-              this.unemploymentPoints=(45)*(1-(unemploymentData-32)/(91))-10|| 0;
-              console.log("unemp. points: ", this.unemploymentPoints);
-              
-              if ( this.policeStationsCount==1){
-                this.policePoints=13;
-              }
-              else if (this.policeStationsCount==2){
-                this.policePoints=15;
-              }
-              else if (this.policeStationsCount==3){
-                this.policePoints=17;
-              }
-              else if (this.policeStationsCount>3){
-                this.policePoints=20;
-              }
-              else{
-                this.policePoints=-10;
-              }
-
-
-              if ( this.schoolsCount==1){
-                this.schoolPoints=10;
-              }
-              else if ( this.schoolsCount==2){
-                this.schoolPoints=15;
-              }
-              else if ( this.schoolsCount>5){
-                this.schoolPoints=25;
-              }
-              else if(this.schoolsCount>2){
-                this.schoolPoints=20;
-              }
-              else{
-                this.schoolPoints=-10;
-              }
-
+              this.incomePoints = this.calculatePoints(this.incomeData, 25000, 37250, 20866);
+              this.unemploymentPoints = this.calculatePoints(this.unemploymentData, 89.91, 123, 32, true);
+              this.policePoints = this.calculatePoints(this.policeStationsCount, 2.1, 11, 0);
+              this.schoolPoints = this.calculatePoints(this.schoolsCount, 3.77, 16, 0);
+              this.hospitalPoints = this.calculatePoints(this.hospitalCount, 2.29, 9, 0);
+              this.greenSpacePoints = this.calculatePoints(this.greenSpaceCount, 90.96, 183, 23);
+      
               if (this.distanceToCenter<1500){
                 this.distancePoints=25;
               }
@@ -203,35 +184,23 @@ export class QolFormComponent {
                 this.distancePoints=-5;
               }
               else{
-                this.distancePoints=-25;
-              }
-
-
-              if (this.hospitalCount==1){
-                this.hospitalPoints=20;
-              }
-              else if(this.hospitalCount==2){
-                this.hospitalPoints=25;
-              }
-              else if (this.hospitalCount>2){
-                this.hospitalPoints=27;
-              }
-              else{
-                this.hospitalPoints-20;
+                this.distancePoints=-15;
               }
               
+              console.log("Points:  ", "Hospital: ", this.hospitalPoints,"  Police: ", this.policePoints,"  School: ",
+               this.schoolPoints, "  Income: ", this.incomePoints, "  Unemployment: ", this.unemploymentPoints, "  Distance: ", 
+               this.distancePoints, "  Green Space: ", this.greenSpacePoints);
 
-              let qolBase = 30; 
+
+              
+
               var qualityOfLife=0;
-              
-
               this.qualityOfLife = qualityOfLife;
               
               this.AddModifiersTogether();
               this.calculateQualityOfLife();
 
               this.showResults = true;
-              console.log(this.unemploymentPoints, "  ", this.unemploymentModifier)
               
               this.showSliders=true;
 
@@ -243,6 +212,7 @@ export class QolFormComponent {
       error: (error) => console.error('An error occurred:', error)
     });
   }
+
   calculateInitialModifiers() {
     switch (this.qolData.status) {
       case 'retiree':
@@ -252,6 +222,7 @@ export class QolFormComponent {
         this.hospitalModifier = 1.5;
         this.unemploymentModifier=0.5;
         this.distanceModifier=1;
+        this.greenSpaceModifier=1;
         //5.3
         break;
       case 'student':
@@ -261,6 +232,8 @@ export class QolFormComponent {
         this.hospitalModifier = 0.8;
         this.unemploymentModifier=1.2;
         this.distanceModifier=1.5;
+        
+        this.greenSpaceModifier=1;
         //4.55
         break;
       case 'family':
@@ -270,12 +243,14 @@ export class QolFormComponent {
         this.hospitalModifier = 1;
         this.unemploymentModifier=0.8;
         this.distanceModifier=0.5;
+        
+        this.greenSpaceModifier=1;
         //6
         break;
     }
   }
   AddModifiersTogether(){
-    this.allModifiers=this.incomeModifier+this.policeModifier+this.schoolModifier+this.hospitalModifier+this.unemploymentModifier+this.distanceModifier;
+    this.allModifiers=this.incomeModifier+this.policeModifier+this.schoolModifier+this.hospitalModifier+this.unemploymentModifier+this.distanceModifier+this.greenSpaceModifier;
   }
   calculateQualityOfLife() {
     
@@ -287,6 +262,17 @@ export class QolFormComponent {
       + this.incomeModifier * this.incomePoints
       + this.hospitalModifier * this.hospitalPoints
       + this.unemploymentModifier* this.unemploymentPoints
+      + this.greenSpaceModifier* this.greenSpacePoints
     )/this.allModifiers)*10)/10;
   }
+  calculatePoints(value: number, avg: number, max: number, min: number, reverse: boolean = false): number {
+    const range = max - min; // Define the range of the data
+    let normalizedValue = (value - min) / range; // Normalize the value between 0 and 1
+    if (reverse) {
+      normalizedValue = 1 - normalizedValue; // Reverse the scale for negative impacts
+    }
+    let points = normalizedValue * 45 - 10; // Spread across 45 units, shift to start from -10
+    return Math.min(Math.max(points, -10), 35); // Clamp values to stay within -10 and +35
+  }
+  
 }

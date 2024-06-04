@@ -1,0 +1,75 @@
+<!-- test-run.component.html -->
+<h1>Test Run Results</h1>
+<div *ngIf="finalResults && averageResults; else loading">
+  <h2>All Results:</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Test #</th>
+        <th>Coordinates</th>
+        <th>Police Stations</th>
+        <th>Hospitals</th>
+        <th>Schools</th>
+        <th>Green Spaces</th>
+        <th>Distance to Center (m)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let result of finalResults; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>({{ result[5] | number:'1.2-2' }}, {{ result[6] | number:'1.2-2' }})</td>
+        <td>{{ result[0] }}</td>
+        <td>{{ result[1] }}</td>
+        <td>{{ result[2] }}</td>
+        <td>{{ result[4] }}</td>
+        <td>{{ result[3] }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <h2>Average, Max, and Min Results:</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Average</th>
+        <th>Max</th>
+        <th>Min</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Police Stations</td>
+        <td>{{ averageResults[0].average | number:'1.0-2' }}</td>
+        <td>{{ averageResults[0].max }}</td>
+        <td>{{ averageResults[0].min }}</td>
+      </tr>
+      <tr>
+        <td>Hospitals</td>
+        <td>{{ averageResults[1].average | number:'1.0-2' }}</td>
+        <td>{{ averageResults[1].max }}</td>
+        <td>{{ averageResults[1].min }}</td>
+      </tr>
+      <tr>
+        <td>Schools</td>
+        <td>{{ averageResults[2].average | number:'1.0-2' }}</td>
+        <td>{{ averageResults[2].max }}</td>
+        <td>{{ averageResults[2].min }}</td>
+      </tr>
+      <tr>
+        <td>Green Spaces</td>
+        <td>{{ averageResults[4].average | number:'1.0-2' }}</td>
+        <td>{{ averageResults[4].max }}</td>
+        <td>{{ averageResults[4].min }}</td>
+      </tr>
+      <tr>
+        <td>Distance to Center</td>
+        <td>{{ averageResults[3].average | number:'1.0-2' }} m</td>
+        <td>{{ averageResults[3].max }} m</td>
+        <td>{{ averageResults[3].min }} m</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<ng-template #loading>
+  <p>Loading results...</p>
+</ng-template>

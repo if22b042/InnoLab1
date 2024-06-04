@@ -7,11 +7,13 @@ import { AppComponent } from './app.component';
 import { PoliceStationsService } from './police-stations/police-stations.service';
 import { HttpClientModule } from '@angular/common/http';
 import { QolFormComponent } from './qol-form/qol-form.component';
+import { TestRunComponent } from './test-run/test-run.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    QolFormComponent
+    QolFormComponent,
+    TestRunComponent
   ],
   imports: [
     BrowserModule,
