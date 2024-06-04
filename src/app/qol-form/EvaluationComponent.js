@@ -4,7 +4,6 @@ class EvaluationComponent {
       this.unemploymentRate = 0; // This should be assigned similarly
       this.income = 0; // And this one too
   
-      // Example data fetched or defined somewhere
       this.policeStats = { avg: 2.1, max: 11, min: 0 };
       this.hospitalStats = { avg: 2.29, max: 9, min: 0 };
       this.schoolStats = { avg: 3.77, max: 16, min: 0 };
