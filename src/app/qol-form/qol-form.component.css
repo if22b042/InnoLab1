@@ -8,7 +8,6 @@
     background-color: #f9f9f9;
   }
   
-  /* Margin for the top */
   .mt-5 {
     margin-top: 5rem;
   }
@@ -39,12 +38,11 @@
     background-color: #0056b3;
   }
   
-  /* Styles for results section */
+  
   .results {
     margin-top: 2rem;
   }
   
-  /* Adjustments for sliders */
   .form-range {
     width: 100%;
   }

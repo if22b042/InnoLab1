@@ -1,8 +1,9 @@
 class EvaluationComponent {
     constructor() {
-      this.policeStationsCount = 0; // This should be assigned from your data fetching logic
-      this.unemploymentRate = 0; // This should be assigned similarly
-      this.income = 0; // And this one too
+      this.policeStationsCount = 0; 
+      this.unemploymentRate = 0;
+      this.income = 0;
+      
   
       this.policeStats = { avg: 2.1, max: 11, min: 0 };
       this.hospitalStats = { avg: 2.29, max: 9, min: 0 };
@@ -18,7 +19,6 @@ class EvaluationComponent {
       this.schoolPoints = this.calculateAttributePoints(this.schoolCount, this.schoolStats);
       this.greenSpacePoints = this.calculateAttributePoints(this.greenSpaceArea, this.greenSpaceStats);
   
-      // Special handling for unemployment and income
       this.unemploymentPoints = this.calculateUnemploymentPoints(this.unemploymentRate, this.unemploymentStats);
       this.incomePoints = this.calculateAttributePoints(this.income, this.incomeStats);
   

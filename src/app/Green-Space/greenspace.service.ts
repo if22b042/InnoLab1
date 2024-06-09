@@ -48,7 +48,7 @@ export class GreenSpaceService {
   }
 
   private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    // Use Haversine formula, same as the HospitalService
+  
     const R = 6371e3;
     const p1 = (lat1 * Math.PI) / 180;
     const p2 = (lat2 * Math.PI) / 180;
