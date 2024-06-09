@@ -12,6 +12,7 @@ RUN npm run build
 # Step 2: Serve the application using an NGINX server
 FROM nginx:alpine
 
+# Use the correct output path specified in angular.json
 COPY --from=build-stage /app/dist/life-quality /usr/share/nginx/html
 
 EXPOSE 80
