@@ -13,6 +13,7 @@ import { GreenSpaceService } from '../Green-Space/greenspace.service';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UnemploymentService } from '../Unemployment/unemployment.service';
+import { number } from 'yargs';
 @Component({
   selector: 'app-qol-form',
   templateUrl: './qol-form.component.html',
@@ -130,12 +131,18 @@ export class QolFormComponent {
 
   processCoordinates(coordinates: { lat: number, lng: number }) {
     var districtCode: string;
-    if (+this.qolData.district < 10) {
+    const districtNumber = +this.qolData.district;
+    if (districtNumber > 23 || districtNumber < 1) {
+      alert('The district inputted is invalid. Please enter a district number between 1 and 23.');
+      return;
+    }
+  
+    if (districtNumber < 10) {
       districtCode = `90${this.qolData.district.padStart(3, '')}00`;
     } else {
       districtCode = `9${this.qolData.district.padStart(3, '')}00`;
     }
-
+  
     console.log("lat: ", coordinates.lat, "lng: ", coordinates.lng);
     const incomeObservable = this.csvReaderService.getDataForDistrict(districtCode, '/assets/Income.csv').pipe(
       catchError((error) => {
@@ -143,13 +150,14 @@ export class QolFormComponent {
         return of(null);
       })
     );
-
+  
     const homelessnessObservable = this.unemploymentService.getUnemploymentDensity(districtCode).pipe(
       catchError((error) => {
         console.error('Unemployment CSV file error:', error);
         return of(null);
       })
     );
+  
     const policeStationsObservable = this.policeStationsService.readCsv('/assets/Police_Locations.csv').pipe(
       map(stations => stations.filter(station =>
         this.policeStationsService.calculateDistance(coordinates.lat, coordinates.lng, station.latitude, station.longitude) <= 1000
@@ -159,7 +167,7 @@ export class QolFormComponent {
         return of([]);
       })
     );
-
+  
     const hospitalsObservable = this.hospitalService.readCsv('/assets/Hospital.csv').pipe(
       map(hospitals => this.hospitalService.findNearbyHospitals(hospitals, coordinates.lat, coordinates.lng)),
       catchError((error) => {
@@ -167,20 +175,20 @@ export class QolFormComponent {
         return of([]);
       })
     );
-
+  
     const schoolsObservable = this.schoolsService.findSchoolsNear({ lat: coordinates.lat, lng: coordinates.lng }, 500, '/assets/School_Location.csv').pipe(
       catchError((error) => {
         console.error('School Location CSV file error:', error);
         return of([]);
       })
     );
-
+  
     const distanceToCenterObservable = new Observable<number>((subscriber) => {
       const distance = this.centerDistanceService.calculateDistanceFromCenter(coordinates.lat, coordinates.lng);
       subscriber.next(distance);
       subscriber.complete();
     });
-
+  
     const greenspacesObservable = this.greenSpaceService.readCsv('/assets/GreenSpace.csv').pipe(
       map(greenspaces => this.greenSpaceService.findNearbyGreenSpaces(greenspaces, coordinates.lat, coordinates.lng)),
       catchError((error) => {
